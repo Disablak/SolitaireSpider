@@ -3,13 +3,18 @@ public class CardData
 {
     public CardColor color = CardColor.None;
     public CardType type = CardType.None;
-    public bool isOpen = true;
+    public bool isOpen = false;
 
 
     public CardData(CardType type, CardColor color)
     {
         this.type = type;
         this.color = color;
+    }
+
+    public void Open()
+    {
+        isOpen = true;
     }
 }
 

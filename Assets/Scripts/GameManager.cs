@@ -9,6 +9,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _gameModel = new GameModel();
+        _gameModel = new GameModel(_solitaireData);
     }
 }
