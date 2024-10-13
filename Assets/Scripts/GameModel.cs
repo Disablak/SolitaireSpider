@@ -14,9 +14,9 @@ public class GameModel
 
     public event Action<CardData, RowData>         OnCardAddedToRow = delegate {};
     public event Action<CardData, RowData>         OnCardOpened     = delegate {};
-    public event Action<CardData, RowData>         OnCardRemoved    = delegate {};
     public event Action<StackOfCardsData, RowData> OnStackAdded     = delegate {};
     public event Action<StackOfCardsData, RowData> OnStackRemoved     = delegate {};
+    public event Action<StackOfCardsData, RowData> OnWinStackRemoved  = delegate {};
 
     public GameModel(SolitaireData data)
     {
@@ -37,8 +37,8 @@ public class GameModel
         {
             RowData row = new RowData(i);
             row.OnStackAdded  += OnStackAddedToRow;
-            row.OnCardRemoved += OnCardRemovedFromRow;
             row.OnStackRemoved += OnStackRemovedFromRow;
+            row.OnWinStackRemoved += OnWinStackRemovedFromRow;
             row.OnCardOpened += OnCardOpenedInRow;
 
             _rows.Add(row);
@@ -76,16 +76,62 @@ public class GameModel
         _deckCards = _deckCards.OrderBy(_ => rng.Next()).ToList();
     }
 
-    private void OnCardRemovedFromRow( CardData card, RowData row )
+    private void OnWinStackRemovedFromRow( StackOfCardsData stack, RowData row )
     {
-        OnCardRemoved(card, row);
+        OnWinStackRemoved(stack, row);
         row.OpenLastCard();
     }
 
     public void StartSetup()
     {
+        //Test0();
         AddCardsFromDeckToRows(_data.startCardsCount);
         OpenLastCardInRows();
+    }
+
+    private void Test0()
+    {
+        var cards  = new List<CardData>();
+        int cardId = 0;
+        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
+        {
+            var card = new CardData( cardId++, cardType, CardColor.Black );
+            card.Open();
+            cards.Add( card );
+        }
+
+        cards.Reverse();
+
+        var partOne = cards.Take( 6 ).ToList();
+        var partTwo = cards.Skip( 6 ).ToList();
+
+        AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[0] );
+
+        foreach ( var card in partOne )
+        {
+            AddCardToRow(card, _rows[0]);
+        }
+
+        foreach ( var card in partTwo )
+        {
+            AddCardToRow(card, _rows[1]);
+        }
+
+        void AddCardToRow(CardData card, RowData row)
+        {
+            row.AddCard( card );
+            OnCardAddedToRow(card, row);
+        }
+    }
+
+    public bool CanAddCards()
+    {
+        return _deckCards.Count > 0;
+    }
+
+    public void AddCardsFromDeckToRows()
+    {
+        AddCardsFromDeckToRows(_data.rowCount);
     }
 
     public void AddCardsFromDeckToRows(int count)

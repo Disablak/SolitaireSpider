@@ -10,12 +10,12 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        _gameModel = new GameModel(_solitaireData);
-        _gameModel.OnCardOpened += OnCardOpened;
-        _gameModel.OnCardAddedToRow += OnCardAddedToRow;
-        _gameModel.OnStackAdded += OnStackAdded;
-        _gameModel.OnCardRemoved += OnCardRemoved;
-        _gameModel.OnStackRemoved += OnStackRemoved;
+        _gameModel                   =  new GameModel(_solitaireData);
+        _gameModel.OnCardOpened      += OnCardOpened;
+        _gameModel.OnCardAddedToRow  += OnCardAddedToRow;
+        _gameModel.OnStackAdded      += OnStackAdded;
+        _gameModel.OnWinStackRemoved += OnWinStackRemoved;
+        _gameModel.OnStackRemoved    += OnStackRemoved;
 
         //_gameModel.Initialize();
 
@@ -30,14 +30,13 @@ public class GameManager : MonoBehaviour
         _gameView.RemoveStackOfCards(arg1, arg2);
     }
 
-    private void OnCardRemoved( CardData arg1, RowData arg2 )
+    private void OnWinStackRemoved( StackOfCardsData arg1, RowData arg2 )
     {
-        //throw new NotImplementedException();
+        _gameView.RemoveStackOfCards(arg1, arg2); // TODO with animation
     }
 
     private void OnStackAdded( StackOfCardsData arg1, RowData arg2 )
     {
-        Debug.Log( "OnStackAdded" );
         _gameView.AddStackOfCards(arg1, arg2);
     }
 

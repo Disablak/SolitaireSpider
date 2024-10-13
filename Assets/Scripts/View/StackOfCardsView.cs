@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
 
 public class StackOfCardsView : MonoBehaviour
 {
@@ -9,12 +11,32 @@ public class StackOfCardsView : MonoBehaviour
     private List<CardView> _cards = new List<CardView>();
 
 
+    private void Awake()
+    {
+        _cards = _cardsContainer.GetComponentsInChildren<CardView>().ToList();
+
+        foreach ( CardView card in _cards )
+            card.DisableRaycastTarget();
+    }
+
     public void Init(StackOfCardsData stackOfCardsData)
     {
-        foreach ( CardData card in stackOfCardsData.Cards )
+        gameObject.SetActive( true );
+
+        foreach ( CardView card in _cards )
+            card.gameObject.SetActive( false );
+
+        for ( int i = 0; i < stackOfCardsData.Cards.Count; i++ )
         {
-            var cardView = Instantiate( _cardPrefab, _cardsContainer);
-            cardView.Init(card);
+            var cardView = _cards[i];
+            var cardData = stackOfCardsData.Cards[i];
+            cardView.Init(cardData);
+            cardView.gameObject.SetActive(true);
         }
+    }
+
+    public void Deinit()
+    {
+        gameObject.SetActive( false );
     }
 }

@@ -33,6 +33,11 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         SetCardImage( _card.type );
     }
 
+    public void DisableRaycastTarget()
+    {
+        _cardImage.raycastTarget = false;
+    }
+
     private void SetCardImage(CardType cardType)
     {
         _cardImage.sprite = _cardSprites[(int)cardType - 1];

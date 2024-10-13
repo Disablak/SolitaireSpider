@@ -6,15 +6,15 @@ public class GameView : MonoBehaviour
 {
     [SerializeField] private RowUI _rowPrefab;
     [SerializeField] private CardView _cardPrefab;
-    [SerializeField] private StackOfCardsView _stackOfCardsPrefab;
+    [SerializeField] private StackOfCardsView _stackOfCardsView;
     [SerializeField] private Transform _rowContainer;
+    [SerializeField] private CardView _otherCard;
     [SerializeField] private PointerInput _pointerInput;
 
 
     private List<RowUI> _rows = new List<RowUI>();
     private GameModel _gameModel;
     public int _lastPointedRow = -1;
-    private StackOfCardsView _currentStackOfCardsView;
     private StackOfCardsData _currentStackOfCardsData;
 
     public void Init(GameModel gameModel) // TODO VIEW NOT ABLE TO SEE MODEL
@@ -22,6 +22,17 @@ public class GameView : MonoBehaviour
         _gameModel = gameModel;
 
         _pointerInput.OnMouseReleased += OnPointerReleased;
+
+        _otherCard.OnClickedCard += OnClickOtherCard;
+    }
+
+    private void OnClickOtherCard(CardView obj)
+    {
+        if (_gameModel.CanAddCards())
+        {
+            _gameModel.AddCardsFromDeckToRows();
+            _gameModel.OpenLastCardInRows();
+        }
     }
 
     private void OnPointerReleased()
@@ -35,12 +46,19 @@ public class GameView : MonoBehaviour
         {
             _gameModel.AddStackOfCards(_currentStackOfCardsData, _lastPointedRow);
             _gameModel.RemoveStackOfCards(_currentStackOfCardsData, _currentStackOfCardsData.OriginRowId);
+        }else
+        {
+            if (_pointerInput.IsStackStickedToPointer)
+            {
+                RowUI rowView = _rows[_currentStackOfCardsData.OriginRowId];
+                rowView.ShowOrHideStack(_currentStackOfCardsData, true);
+            }
         }
 
-        if (_currentStackOfCardsView)
+        if (_pointerInput.IsStackStickedToPointer)
         {
-            _currentStackOfCardsView.gameObject.SetActive( false );
-            _currentStackOfCardsView = null;
+            _stackOfCardsView.Deinit();
+            _currentStackOfCardsData = null;
         }
     }
 
@@ -69,13 +87,13 @@ public class GameView : MonoBehaviour
             return;
         }
 
-        StackOfCardsView stackOfCardsView = Instantiate( _stackOfCardsPrefab, transform );
         StackOfCardsData stackOfCardsData = _gameModel.TakeStackOfCards(cardView.Id, rowView.Id);
 
-        stackOfCardsView.Init( stackOfCardsData );
+        _stackOfCardsView.Init( stackOfCardsData );
 
-        _pointerInput.StickToPointer(stackOfCardsView);
-        _currentStackOfCardsView = stackOfCardsView;
+        rowView.ShowOrHideStack(stackOfCardsData, false);
+
+        _pointerInput.StickToPointer(_stackOfCardsView);
         _currentStackOfCardsData = stackOfCardsData;
     }
 

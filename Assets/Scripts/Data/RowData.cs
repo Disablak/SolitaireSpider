@@ -8,10 +8,10 @@ public class RowData
     public List<CardData> cards = new List<CardData>();
     public int id;
 
-    public event Action<CardData, RowData>         OnCardRemoved  = delegate {};
-    public event Action<StackOfCardsData, RowData> OnStackAdded   = delegate {};
-    public event Action<StackOfCardsData, RowData> OnStackRemoved = delegate {};
-    public event Action<CardData, RowData> OnCardOpened = delegate {};
+    public event Action<StackOfCardsData, RowData> OnWinStackRemoved = delegate {};
+    public event Action<StackOfCardsData, RowData> OnStackAdded      = delegate {};
+    public event Action<StackOfCardsData, RowData> OnStackRemoved    = delegate {};
+    public event Action<CardData, RowData>         OnCardOpened      = delegate {};
 
     public RowData(int id)
     {
@@ -27,7 +27,7 @@ public class RowData
     {
         cards.Add(card);
         //TODO event on add card
-        TryToRemoveValidSet();
+        TryToRemoveWinSet();
     }
 
     public void AddStack(StackOfCardsData stack)
@@ -35,7 +35,7 @@ public class RowData
         cards.AddRange(stack.Cards);
         OnStackAdded(stack, this);
 
-        TryToRemoveValidSet();
+        TryToRemoveWinSet();
     }
 
     public StackOfCardsData TakeStack(int cardId)
@@ -143,22 +143,24 @@ public class RowData
         return false;
     }
 
-    private void TryToRemoveValidSet()
+    private void TryToRemoveWinSet()
     {
         if (!IsValidSet())
             return;
 
+        List<CardData> winSet = new List<CardData>();
+
         for ( int i = cards.Count - 1; i >= 0; i-- ) // TODO refa
         {
             CardData card = cards[i];
-            cards.Remove( card );
-
-            OnCardRemoved(card, this);
+            winSet.Add(card);
 
             if (card.type == CardType.King)
-            {
-                return;
-            }
+                break;
         }
+
+        cards = cards.Except( winSet ).ToList();
+
+        OnWinStackRemoved(new StackOfCardsData( winSet, id ), this);
     }
 }

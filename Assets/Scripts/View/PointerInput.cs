@@ -10,10 +10,11 @@ public class PointerInput : MonoBehaviour
 
     public event Action OnMouseReleased = delegate { };
 
+    public bool IsStackStickedToPointer => _stickStackOfCardsView;
+
+
     private void Update()
     {
-
-
         IsPressed = Input.GetMouseButton(0);
 
         if (_stickStackOfCardsView)
@@ -26,8 +27,6 @@ public class PointerInput : MonoBehaviour
             OnMouseReleased();
             UnstickFromPointer();
         }
-
-
     }
 
     public void StickToPointer( StackOfCardsView stackOfCards )
