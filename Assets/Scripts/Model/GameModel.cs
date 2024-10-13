@@ -12,11 +12,11 @@ public class GameModel
     private SolitaireData _data;
 
 
-    public event Action<CardData, RowData>         OnCardAddedToRow = delegate {};
-    public event Action<CardData, RowData>         OnCardOpened     = delegate {};
-    public event Action<StackOfCardsData, RowData> OnStackAdded     = delegate {};
-    public event Action<StackOfCardsData, RowData> OnStackRemoved     = delegate {};
-    public event Action<StackOfCardsData, RowData> OnWinStackRemoved  = delegate {};
+    public event Action<Dictionary<CardData, RowData>>             OnCardsAddedToRows  = delegate {};
+    public event Action<CardData, RowData>         OnCardOpened      = delegate {};
+    public event Action<StackOfCardsData, RowData> OnStackAdded      = delegate {};
+    public event Action<StackOfCardsData, RowData> OnStackRemoved    = delegate {};
+    public event Action<StackOfCardsData, RowData> OnWinStackRemoved = delegate {};
 
     public GameModel(SolitaireData data)
     {
@@ -105,22 +105,22 @@ public class GameModel
         var partOne = cards.Take( 6 ).ToList();
         var partTwo = cards.Skip( 6 ).ToList();
 
+        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
+
         AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[0] );
 
         foreach ( var card in partOne )
-        {
             AddCardToRow(card, _rows[0]);
-        }
 
         foreach ( var card in partTwo )
-        {
             AddCardToRow(card, _rows[1]);
-        }
+
+        OnCardsAddedToRows(dicCardsToRows);
 
         void AddCardToRow(CardData card, RowData row)
         {
             row.AddCard( card );
-            OnCardAddedToRow(card, row);
+            dicCardsToRows.Add( card, row );
         }
     }
 
@@ -138,13 +138,17 @@ public class GameModel
     {
         List<CardData> cards = _deckCards.Take(count).ToList();
 
+        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
+
         for ( int i = 0; i < cards.Count; i++ )
         {
             int rowIndex = (int)Mathf.Repeat( i, _rows.Count );
             _rows[rowIndex].AddCard( cards[i] );
 
-            OnCardAddedToRow(cards[i], _rows[rowIndex]);
+            dicCardsToRows.Add( cards[i], _rows[rowIndex] );
         }
+
+        OnCardsAddedToRows(dicCardsToRows);
 
         _deckCards = _deckCards.Except( cards ).ToList();
     }

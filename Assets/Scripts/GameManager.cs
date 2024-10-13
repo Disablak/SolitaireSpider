@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -8,19 +10,19 @@ public class GameManager : MonoBehaviour
 
     private GameModel _gameModel;
 
-    private void Awake()
+    private IEnumerator Start()
     {
         _gameModel                   =  new GameModel(_solitaireData);
         _gameModel.OnCardOpened      += OnCardOpened;
-        _gameModel.OnCardAddedToRow  += OnCardAddedToRow;
+        _gameModel.OnCardsAddedToRows  += OnCardsAddedToRows;
         _gameModel.OnStackAdded      += OnStackAdded;
         _gameModel.OnWinStackRemoved += OnWinStackRemoved;
         _gameModel.OnStackRemoved    += OnStackRemoved;
 
-        //_gameModel.Initialize();
-
         _gameView.Init( _gameModel );
         _gameView.AddRows( _gameModel.GetRowCount() );
+
+        yield return null;
 
         _gameModel.StartSetup();
     }
@@ -40,9 +42,9 @@ public class GameManager : MonoBehaviour
         _gameView.AddStackOfCards(arg1, arg2);
     }
 
-    private void OnCardAddedToRow( CardData card, RowData row )
+    private void OnCardsAddedToRows( Dictionary<CardData, RowData> dictionary )
     {
-        _gameView.AddCardToRow( card, row.id );
+        _gameView.AddCardsToRows( dictionary );
     }
 
     private void OnCardOpened( CardData card, RowData rowData )
