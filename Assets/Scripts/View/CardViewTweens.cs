@@ -10,11 +10,19 @@ public class CardViewTweens : MonoBehaviour
     [SerializeField] private Canvas _canvas;
     [SerializeField] private RectTransform _rtOtherCard;
 
-    private UniTask<UniTaskVoid> _currentTask;
+    private Sequence _sequence;
+    private List<Action> _onFinishCardsToRows = new List<Action>();
+
+    public bool IsCardsTweening
+        => _sequence != null && _sequence.IsActive() && _sequence.IsPlaying();
+
+    private const float CARD_TWEEN_INTERVAL = 0.05f;
+    private const float CARD_TWEEN_TIME = 0.5f;
 
 
     class TweenCardData
     {
+        public CardView cardView;
         public RectTransform rtCard;
         public Vector2 from;
         public Vector2 to;
@@ -30,24 +38,40 @@ public class CardViewTweens : MonoBehaviour
             var fromPos = GetUIPositionRelativeToCanvas( _rtOtherCard,                      _canvas );
             var toPos   = GetUIPositionRelativeToCanvas( pair.Value.GetComponent<RectTransform>(), _canvas );
 
-            tweenCardData.Add( new TweenCardData() {rtCard = rt, from = fromPos, to = toPos, finishCallback = () => pair.Value.AddCard( pair.Key )} );
+            tweenCardData.Add( new TweenCardData() {cardView = pair.Key, rtCard = rt, from = fromPos, to = toPos, finishCallback = () => pair.Value.AddCard( pair.Key )} );
         }
 
-        _currentTask = UniTask.RunOnThreadPool( () => AsyncTweenCards( tweenCardData ) );
-    }
-
-    private void Update()
-    {
-        Debug.LogError( _currentTask.GetAwaiter().IsCompleted );
-    }
-
-    private async UniTaskVoid AsyncTweenCards(List<TweenCardData> tweenCardData)
-    {
+        _sequence = DOTween.Sequence();
         foreach ( TweenCardData data in tweenCardData )
         {
-            await UniTask.Delay( TimeSpan.FromSeconds( 0.05f ));
-            data.rtCard.DOAnchorPos( data.to, 0.3f ).From(data.from).SetEase( Ease.InOutSine ).OnComplete( () => data.finishCallback?.Invoke() );
+            _sequence.AppendInterval( CARD_TWEEN_INTERVAL )
+                     .AppendCallback( () => data.cardView.ShowOrHide( true ) )
+                     .AppendCallback( () => data.rtCard.DOAnchorPos( data.to, CARD_TWEEN_TIME ).From(data.from).SetEase( Ease.InOutSine ).OnComplete( () => data.finishCallback?.Invoke() ) );
         }
+        _sequence.AppendInterval( CARD_TWEEN_TIME + 0.1f );
+        _sequence.OnComplete( InvokeActions );
+        _sequence.Play();
+    }
+
+    public void AddActionInQueueOrInvokeImediatly(Action onFinish)
+    {
+        if (IsCardsTweening)
+            _onFinishCardsToRows.Add( onFinish );
+        else
+            onFinish?.Invoke();
+    }
+
+    private void InvokeActions()
+    {
+        _sequence = DOTween.Sequence();
+
+        foreach ( Action action in _onFinishCardsToRows )
+        {
+            _sequence.AppendCallback( () => action?.Invoke() );
+            _sequence.AppendInterval( CARD_TWEEN_INTERVAL );
+        }
+        _sequence.OnComplete( () => _onFinishCardsToRows.Clear() );
+        _sequence.Play();
     }
 
     private Vector2 GetUIPositionRelativeToCanvas(RectTransform uiElement, Canvas canvas)

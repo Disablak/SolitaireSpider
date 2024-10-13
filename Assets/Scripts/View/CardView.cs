@@ -38,6 +38,11 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         _cardImage.raycastTarget = false;
     }
 
+    public void ShowOrHide(bool show)
+    {
+        gameObject.SetActive( show );
+    }
+
     private void SetCardImage(CardType cardType)
     {
         _cardImage.sprite = _cardSprites[(int)cardType - 1];

@@ -117,6 +117,7 @@ public class GameView : MonoBehaviour
             CardView cardView = Instantiate(_cardPrefab, transform);
 
             cardView.Init(value_pair.Key);
+            cardView.ShowOrHide( false );
             dictionaryView.Add( cardView, rowView );
         }
 
@@ -125,7 +126,7 @@ public class GameView : MonoBehaviour
 
     public void OpenCard(CardData cardData, RowData rowData)
     {
-        _rows[rowData.id].OpenCard( cardData );
+        _cardViewTweens.AddActionInQueueOrInvokeImediatly( () => _rows[rowData.id].OpenCard( cardData ) );
     }
 
     public void AddStackOfCards(StackOfCardsData stackOfCardsData, RowData rowData)
