@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 
-public class RowUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] public Transform _cardContainer;
 
@@ -15,7 +15,7 @@ public class RowUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public List<CardView> Cards => _cards;
     public int Id => _id;
 
-    public event Action<CardView, RowUI> OnClickedCardInRow = delegate{};
+    public event Action<CardView, RowView> OnClickedCardInRow = delegate{};
     public event Action<int> OnPointerEnterInRow = delegate{};
 
 
