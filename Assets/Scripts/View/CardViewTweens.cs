@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -9,6 +8,7 @@ public class CardViewTweens : MonoBehaviour
 {
     [SerializeField] private Canvas _canvas;
     [SerializeField] private RectTransform _rtOtherCard;
+    [SerializeField] private WinStacksView _winStacksView;
 
     private Sequence _sequence;
     private List<Action> _onFinishCardsToRows = new List<Action>();
@@ -16,8 +16,8 @@ public class CardViewTweens : MonoBehaviour
     public bool IsCardsTweening
         => _sequence != null && _sequence.IsActive() && _sequence.IsPlaying();
 
-    private const float CARD_TWEEN_INTERVAL = 0.05f;
-    private const float CARD_TWEEN_TIME = 0.5f;
+    private const float CARD_TWEEN_INTERVAL = 0.01f;
+    private const float CARD_TWEEN_TIME = 0.3f;
 
 
     class TweenCardData
@@ -27,6 +27,33 @@ public class CardViewTweens : MonoBehaviour
         public Vector2 from;
         public Vector2 to;
         public Action finishCallback;
+    }
+
+    public void TweenWinStack(List<CardView> cards, Action finishCallback)
+    {
+        cards.Reverse();
+
+        _sequence = DOTween.Sequence();
+        _sequence.AppendInterval( 0.1f );
+
+        foreach ( CardView card in cards )
+        {
+            var rt      = card.transform as RectTransform;
+            var toPos   = GetUIPositionRelativeToCanvas( _winStacksView.GetComponent<RectTransform>(), _canvas );
+            _sequence.AppendInterval( 0.02f )
+                     .AppendCallback( () => card.ShowOrHide( true ) )
+                     .AppendCallback( () => rt.DOAnchorPos( toPos, CARD_TWEEN_TIME ).SetEase( Ease.InOutSine ) );
+        }
+
+        _sequence.AppendInterval( CARD_TWEEN_TIME + 0.1f );
+        _sequence.OnComplete( OnFinish );
+        _sequence.Play();
+
+        void OnFinish()
+        {
+            finishCallback?.Invoke();
+            InvokeActions();
+        }
     }
 
     public void TweenCardsToRows(Dictionary<CardView, RowView> dictionary)

@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
 
     private void OnWinStackRemoved( StackOfCardsData arg1, RowData arg2 )
     {
-        _gameView.RemoveStackOfCards(arg1, arg2); // TODO with animation
+        _gameView.RemoveWinStack(arg1, arg2);
     }
 
     private void OnStackAdded( StackOfCardsData arg1, RowData arg2 )

@@ -61,7 +61,7 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         }
     }
 
-    private List<CardView> GetCardsByStack(StackOfCardsData stack)
+    public List<CardView> GetCardsByStack(StackOfCardsData stack)
     {
         List<CardView> cards = new List<CardView>();
         for ( int i = 0; i < Cards.Count; i++ )

@@ -84,9 +84,9 @@ public class GameModel
 
     public void StartSetup()
     {
-        //Test0();
-        AddCardsFromDeckToRows(_data.startCardsCount);
-        OpenLastCardInRows();
+        Test0();
+        //ddCardsFromDeckToRows(_data.startCardsCount);
+        //OpenLastCardInRows();
     }
 
     private void Test0()
@@ -107,13 +107,13 @@ public class GameModel
 
         Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
 
-        AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[0] );
+        AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[3] );
 
         foreach ( var card in partOne )
-            AddCardToRow(card, _rows[0]);
+            AddCardToRow(card, _rows[3]);
 
         foreach ( var card in partTwo )
-            AddCardToRow(card, _rows[1]);
+            AddCardToRow(card, _rows[4]);
 
         OnCardsAddedToRows(dicCardsToRows);
 

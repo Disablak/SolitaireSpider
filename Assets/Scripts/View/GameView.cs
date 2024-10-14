@@ -29,6 +29,9 @@ public class GameView : MonoBehaviour
 
     private void OnClickOtherCard(CardView obj)
     {
+        if (_cardViewTweens.IsCardsTweening)
+            return;
+
         if (_gameModel.CanAddCards())
         {
             _gameModel.AddCardsFromDeckToRows();
@@ -38,6 +41,9 @@ public class GameView : MonoBehaviour
 
     private void OnPointerReleased()
     {
+        if (_cardViewTweens.IsCardsTweening)
+            return;
+
         if (_lastPointedRow == -1)
         {
             return;
@@ -83,10 +89,11 @@ public class GameView : MonoBehaviour
 
     private void OnClickedCardInRow(CardView cardView, RowView rowView)
     {
-        if (!_gameModel.CanTakeStackOfCards( cardView.Id, rowView.Id ))
-        {
+        if (_cardViewTweens.IsCardsTweening)
             return;
-        }
+
+        if (!_gameModel.CanTakeStackOfCards( cardView.Id, rowView.Id ))
+            return;
 
         StackOfCardsData stackOfCardsData = _gameModel.TakeStackOfCards(cardView.Id, rowView.Id);
 
@@ -132,13 +139,19 @@ public class GameView : MonoBehaviour
     public void AddStackOfCards(StackOfCardsData stackOfCardsData, RowData rowData)
     {
         foreach ( CardData card in stackOfCardsData.Cards )
-        {
             AddCardToRow( card, rowData );
-        }
     }
 
     public void RemoveStackOfCards(StackOfCardsData stackOfCardsData, RowData rowData)
     {
         _rows[rowData.id].RemoveStack(stackOfCardsData);
+    }
+
+    public void RemoveWinStack(StackOfCardsData stackOfCardsData, RowData rowData)
+    {
+        var cards = _rows[rowData.id].GetCardsByStack( stackOfCardsData );
+
+        _cardViewTweens.TweenWinStack(cards, () => _rows[rowData.id].RemoveStack(stackOfCardsData) );
+        //RemoveStackOfCards
     }
 }
