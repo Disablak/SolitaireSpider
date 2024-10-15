@@ -116,16 +116,17 @@ public class GameView : MonoBehaviour
 
     public void AddCardsToRows(Dictionary<CardData, RowData> dictionary)
     {
-        Dictionary<CardView, RowView> dictionaryView = new Dictionary<CardView, RowView>();
+        Dictionary<CardData, RowView> dictionaryView = new Dictionary<CardData, RowView>();
 
         foreach ( KeyValuePair<CardData,RowData> value_pair in dictionary )
         {
             RowView rowView  = _rows[value_pair.Value.id];
             CardView cardView = Instantiate(_cardPrefab, transform);
-
             cardView.Init(value_pair.Key);
-            cardView.ShowOrHide( false );
-            dictionaryView.Add( cardView, rowView );
+            cardView.ShowOrHideSprite( false );
+            rowView.AddCard( cardView );
+
+            dictionaryView.Add(value_pair.Key, rowView);
         }
 
         _cardViewTweens.TweenCardsToRows(dictionaryView);
@@ -152,6 +153,5 @@ public class GameView : MonoBehaviour
         var cards = _rows[rowData.id].GetCardsByStack( stackOfCardsData );
 
         _cardViewTweens.TweenWinStack(cards, () => _rows[rowData.id].RemoveStack(stackOfCardsData) );
-        //RemoveStackOfCards
     }
 }

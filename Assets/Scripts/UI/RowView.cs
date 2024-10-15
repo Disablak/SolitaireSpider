@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -28,6 +30,9 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         card.transform.SetParent(_cardContainer);
         card.OnClickedCard += OnClickedCard;
+
+        var layoutGroup = _cardContainer.GetComponent<RectTransform>();
+        LayoutRebuilder.ForceRebuildLayoutImmediate( layoutGroup );
 
         _cards.Add( card );
     }
@@ -59,6 +64,18 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         {
             cardView.gameObject.SetActive(show);
         }
+    }
+
+    public void ShowOrHideCardSprite(int id, bool show)
+    {
+        CardView cardView = _cards.FirstOrDefault(x => x.Id == id);
+        if (cardView)
+            cardView.ShowOrHideSprite( show );
+    }
+
+    public CardView GetCardView(int id)
+    {
+        return _cards.FirstOrDefault(x => x.Id == id);
     }
 
     public List<CardView> GetCardsByStack(StackOfCardsData stack)

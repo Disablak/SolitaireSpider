@@ -43,6 +43,11 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
         gameObject.SetActive( show );
     }
 
+    public void ShowOrHideSprite(bool show)
+    {
+        _cardImage.enabled = show;
+    }
+
     private void SetCardImage(CardType cardType)
     {
         _cardImage.sprite = _cardSprites[(int)cardType - 1];
