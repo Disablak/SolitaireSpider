@@ -42,11 +42,7 @@ public class CardViewTweens : MonoBehaviour
         {
 
             _sequence.AppendInterval( 0.02f )
-                     .AppendCallback( () =>
-                     {
-                         card.ShowOrHide( true );
-                         //card.transform.SetParent( transform );
-                     } )
+                     .AppendCallback( () => { card.ShowOrHide( true ); } )
                      .AppendCallback( () => card.transform.DOMove( _winStacksView.transform.position, _cardTweenTime ).SetEase( Ease.InOutSine ) );
         }
 

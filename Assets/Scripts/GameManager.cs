@@ -12,12 +12,13 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator Start()
     {
-        _gameModel                   =  new GameModel(_solitaireData);
-        _gameModel.OnCardOpened      += OnCardOpened;
-        _gameModel.OnCardsAddedToRows  += OnCardsAddedToRows;
-        _gameModel.OnStackAdded      += OnStackAdded;
+        _gameModel = new GameModel(_solitaireData);
+        _gameModel.OnCardOpened += OnCardOpened;
+        _gameModel.OnCardsAddedToRows += OnCardsAddedToRows;
+        _gameModel.OnStackAdded += OnStackAdded;
         _gameModel.OnWinStackRemoved += OnWinStackRemoved;
-        _gameModel.OnStackRemoved    += OnStackRemoved;
+        _gameModel.OnStackRemoved += OnStackRemoved;
+        _gameModel.OnGameOver += OnGameOver;
 
         _gameView.Init( _gameModel );
         _gameView.AddRows( _gameModel.GetRowCount() );
@@ -25,6 +26,11 @@ public class GameManager : MonoBehaviour
         yield return null;
 
         _gameModel.StartSetup();
+    }
+
+    private void OnGameOver( bool win )
+    {
+        Debug.Log( $"Game Over ({win})" );
     }
 
     private void OnStackRemoved( StackOfCardsData arg1, RowData arg2 )

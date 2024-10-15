@@ -51,8 +51,8 @@ public class GameView : MonoBehaviour
 
         if (_gameModel.CanAddStackOfCards(_currentStackOfCardsData, _lastPointedRow))
         {
-            _gameModel.AddStackOfCards(_currentStackOfCardsData, _lastPointedRow);
             _gameModel.RemoveStackOfCards(_currentStackOfCardsData, _currentStackOfCardsData.OriginRowId);
+            _gameModel.AddStackOfCards(_currentStackOfCardsData, _lastPointedRow);
         }else
         {
             if (_pointerInput.IsStackStickedToPointer)

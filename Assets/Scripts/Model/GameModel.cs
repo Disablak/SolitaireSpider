@@ -11,12 +11,12 @@ public class GameModel
     private List<CardData> _deckCards = new List<CardData>();
     private SolitaireData _data;
 
-
-    public event Action<Dictionary<CardData, RowData>>             OnCardsAddedToRows  = delegate {};
-    public event Action<CardData, RowData>         OnCardOpened      = delegate {};
-    public event Action<StackOfCardsData, RowData> OnStackAdded      = delegate {};
-    public event Action<StackOfCardsData, RowData> OnStackRemoved    = delegate {};
-    public event Action<StackOfCardsData, RowData> OnWinStackRemoved = delegate {};
+    public event Action<Dictionary<CardData, RowData>> OnCardsAddedToRows = delegate {};
+    public event Action<CardData, RowData>             OnCardOpened       = delegate {};
+    public event Action<StackOfCardsData, RowData>     OnStackAdded       = delegate {};
+    public event Action<StackOfCardsData, RowData>     OnStackRemoved     = delegate {};
+    public event Action<StackOfCardsData, RowData>     OnWinStackRemoved  = delegate {};
+    public event Action<bool>                          OnGameOver         = delegate {};
 
     public GameModel(SolitaireData data)
     {
@@ -79,18 +79,22 @@ public class GameModel
     private void OnWinStackRemovedFromRow( StackOfCardsData stack, RowData row )
     {
         OnWinStackRemoved(stack, row);
+
         row.OpenLastCard();
+        CheckForWinGame();
     }
 
     public void StartSetup()
     {
-        Test0();
-        //AddCardsFromDeckToRows(_data.startCardsCount);
-        //OpenLastCardInRows();
+        //Test0();
+        AddCardsFromDeckToRows(_data.startCardsCount);
+        OpenLastCardInRows();
     }
 
     private void Test0()
     {
+        _deckCards.Clear();
+
         var cards  = new List<CardData>();
         int cardId = 0;
         for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
@@ -107,7 +111,7 @@ public class GameModel
 
         Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
 
-        AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
+        //AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
 
         foreach ( var card in partOne )
             AddCardToRow(card, _rows[5]);
@@ -192,5 +196,14 @@ public class GameModel
     public void RemoveStackOfCards(StackOfCardsData stack, int rowId)
     {
         _rows[rowId].RemoveStack(stack);
+    }
+
+    private void CheckForWinGame()
+    {
+        if (_deckCards.Count > 0)
+            return;
+
+        if (_rows.All( x => x.cards.Count == 0 ))
+            OnGameOver?.Invoke( true );
     }
 }
