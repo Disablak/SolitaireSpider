@@ -1,14 +1,15 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour
+
+public class GamePresenter : MonoBehaviour
 {
     [SerializeField] private SolitaireData _solitaireData;
     [SerializeField] private GameView _gameView;
 
     private GameModel _gameModel;
+
 
     private IEnumerator Start()
     {
@@ -20,7 +21,6 @@ public class GameManager : MonoBehaviour
         _gameModel.OnStackRemoved += OnStackRemoved;
         _gameModel.OnGameOver += OnGameOver;
 
-        _gameView.Init( _gameModel );
         _gameView.AddRows( _gameModel.GetRowCount() );
 
         yield return null;
@@ -56,5 +56,47 @@ public class GameManager : MonoBehaviour
     private void OnCardOpened( CardData card, RowData rowData )
     {
         _gameView.OpenCard( card, rowData );
+    }
+
+    public bool CanAddNewCards()
+    {
+        return _gameModel.CanAddCards();
+    }
+
+    public bool CanAddStackOfCards(StackOfCardsData stack, int rowId)
+    {
+        return _gameModel.CanAddStackOfCards(stack, rowId);
+    }
+
+    public bool CanTakeStackOfCards(int cardId, int rowId)
+    {
+        return _gameModel.CanTakeStackOfCards(cardId, rowId);
+    }
+
+    public StackOfCardsData GetStackOfCards(int cardId, int rowId)
+    {
+        return _gameModel.GetStackOfCards(cardId, rowId);
+    }
+
+    public void RemoveStackOfCards(StackOfCardsData stack, int rowId)
+    {
+        _gameModel.RemoveStackOfCards(stack, rowId);
+    }
+
+    public void AddStackOfCards(StackOfCardsData stack, int rowId)
+    {
+        _gameModel.AddStackOfCards(stack, rowId);
+    }
+
+    public void AddNewCardsAndOpenLast()
+    {
+        _gameModel.AddCardsFromDeckToRows();
+        _gameModel.OpenLastCardInRows();
+    }
+
+    public void MoveStackOfCards(StackOfCardsData stack, int rowIdFrom, int rowIdTo)
+    {
+        RemoveStackOfCards(stack, rowIdFrom);
+        AddStackOfCards(stack, rowIdTo);
     }
 }

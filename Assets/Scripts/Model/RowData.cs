@@ -38,7 +38,7 @@ public class RowData
         TryToRemoveWinSet();
     }
 
-    public StackOfCardsData TakeStack(int cardId)
+    public StackOfCardsData GetStack(int cardId)
     {
         CardData card = cards.First(x => x.id == cardId);
 

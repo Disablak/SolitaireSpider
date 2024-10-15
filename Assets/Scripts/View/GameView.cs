@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+
 
 public class GameView : MonoBehaviour
 {
+    [SerializeField] private GamePresenter _presenter;
     [SerializeField] private RowView _rowPrefab;
     [SerializeField] private CardView _cardPrefab;
     [SerializeField] private StackOfCardsView _stackOfCardsView;
@@ -12,18 +13,14 @@ public class GameView : MonoBehaviour
     [SerializeField] private PointerInput _pointerInput;
     [SerializeField] private CardViewTweens _cardViewTweens;
 
-
-    private List<RowView> _rows = new List<RowView>();
-    private GameModel _gameModel;
-    public int _lastPointedRow = -1;
+    private List<RowView> _rows;
     private StackOfCardsData _currentStackOfCardsData;
+    public int _lastPointedRow = -1;
 
-    public void Init(GameModel gameModel) // TODO VIEW NOT ABLE TO SEE MODEL
+
+    private void Awake()
     {
-        _gameModel = gameModel;
-
         _pointerInput.OnMouseReleased += OnPointerReleased;
-
         _otherCard.OnClickedCard += OnClickOtherCard;
     }
 
@@ -32,11 +29,8 @@ public class GameView : MonoBehaviour
         if (_cardViewTweens.IsCardsTweening)
             return;
 
-        if (_gameModel.CanAddCards())
-        {
-            _gameModel.AddCardsFromDeckToRows();
-            _gameModel.OpenLastCardInRows();
-        }
+        if (_presenter.CanAddNewCards())
+            _presenter.AddNewCardsAndOpenLast();
     }
 
     private void OnPointerReleased()
@@ -45,32 +39,32 @@ public class GameView : MonoBehaviour
             return;
 
         if (_lastPointedRow == -1)
-        {
             return;
-        }
 
-        if (_gameModel.CanAddStackOfCards(_currentStackOfCardsData, _lastPointedRow))
-        {
-            _gameModel.RemoveStackOfCards(_currentStackOfCardsData, _currentStackOfCardsData.OriginRowId);
-            _gameModel.AddStackOfCards(_currentStackOfCardsData, _lastPointedRow);
-        }else
-        {
-            if (_pointerInput.IsStackStickedToPointer)
-            {
-                RowView rowView = _rows[_currentStackOfCardsData.OriginRowId];
-                rowView.ShowOrHideStack(_currentStackOfCardsData, true);
-            }
-        }
+        if (_presenter.CanAddStackOfCards(_currentStackOfCardsData, _lastPointedRow))
+            _presenter.MoveStackOfCards(_currentStackOfCardsData, _currentStackOfCardsData.OriginRowId, _lastPointedRow);
+        else
+            ReturnStackToPrev();
 
-        if (_pointerInput.IsStackStickedToPointer)
-        {
-            _stackOfCardsView.Deinit();
-            _currentStackOfCardsData = null;
-        }
+        HideStack();
+    }
+
+    private void ReturnStackToPrev()
+    {
+        RowView rowView = _rows[_currentStackOfCardsData.OriginRowId];
+        rowView.ShowOrHideStack(_currentStackOfCardsData, true);
+    }
+
+    private void HideStack()
+    {
+        _stackOfCardsView.Deinit();
+        _currentStackOfCardsData = null;
     }
 
     public void AddRows(int count)
     {
+        _rows = new List<RowView>(count);
+
         for ( int i = 0; i < count; i++ )
         {
             RowView row = Instantiate(_rowPrefab, _rowContainer);
@@ -92,10 +86,10 @@ public class GameView : MonoBehaviour
         if (_cardViewTweens.IsCardsTweening)
             return;
 
-        if (!_gameModel.CanTakeStackOfCards( cardView.Id, rowView.Id ))
+        if (!_presenter.CanTakeStackOfCards( cardView.Id, rowView.Id ))
             return;
 
-        StackOfCardsData stackOfCardsData = _gameModel.TakeStackOfCards(cardView.Id, rowView.Id);
+        StackOfCardsData stackOfCardsData = _presenter.GetStackOfCards(cardView.Id, rowView.Id);
 
         _stackOfCardsView.Init( stackOfCardsData );
 

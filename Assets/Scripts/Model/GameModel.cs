@@ -175,9 +175,9 @@ public class GameModel
         return _rows[rowId].CanTakeStack(cardId);
     }
 
-    public StackOfCardsData TakeStackOfCards(int cardId, int rowId)
+    public StackOfCardsData GetStackOfCards(int cardId, int rowId)
     {
-        return _rows[rowId].TakeStack( cardId );
+        return _rows[rowId].GetStack( cardId );
     }
 
     public bool CanAddStackOfCards(StackOfCardsData stackOfCardsData, int rowId)
