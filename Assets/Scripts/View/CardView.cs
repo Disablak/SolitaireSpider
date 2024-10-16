@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,8 +12,10 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     [SerializeField] private List<Sprite> _cardSprites;
     [SerializeField] private Sprite _closedSprite;
 
-    public int Id => _card.id;
     private CardData _card;
+    private Sequence _sequence;
+
+    public int Id => _card.id;
 
     public event Action<CardView> OnClickedCard = delegate {};
 
@@ -24,13 +27,17 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
         if (_card.isOpen)
         {
-            Open();
+            SetCardImage( _card.type );
         }
     }
 
     public void Open()
     {
-        SetCardImage( _card.type );
+        _sequence = DOTween.Sequence();
+        _sequence.Append( transform.DOScaleX( 0.0f, 0.1f ) );
+        _sequence.AppendCallback( () => SetCardImage( _card.type ) );
+        _sequence.Append( transform.DOScaleX( 1.0f, 0.1f ) );
+        _sequence.Play();
     }
 
     public void DisableRaycastTarget()
