@@ -87,6 +87,8 @@ public class GameModel
     public void StartSetup()
     {
         //Test0();
+        //Test1();
+
         AddCardsFromDeckToRows(_data.startCardsCount);
         OpenLastCardInRows();
     }
@@ -120,6 +122,70 @@ public class GameModel
             AddCardToRow(card, _rows[6]);
 
         OnCardsAddedToRows(dicCardsToRows);
+
+        void AddCardToRow(CardData card, RowData row)
+        {
+            row.AddCard( card );
+            dicCardsToRows.Add( card, row );
+        }
+    }
+
+    private void Test1()
+    {
+        _deckCards.Clear();
+
+        var cards  = new List<CardData>();
+        int cardId = 0;
+        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
+        {
+            var card = new CardData( cardId++, cardType, CardColor.Black );
+            card.Open();
+            cards.Add( card );
+        }
+
+        cards.Reverse();
+
+        var partOne = cards.Take( 6 ).ToList();
+        var partTwo = cards.Skip( 6 ).ToList();
+
+        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
+
+        //AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
+
+        foreach ( var card in partOne )
+            AddCardToRow(card, _rows[5]);
+
+        foreach ( var card in partTwo )
+            AddCardToRow(card, _rows[6]);
+
+
+
+
+
+
+        cards.Clear();
+
+        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
+        {
+            var card = new CardData( cardId++, cardType, CardColor.Black );
+            card.Open();
+            cards.Add( card );
+        }
+
+        cards.Reverse();
+
+        var partThree = cards.Take( 6 ).ToList();
+        var partFour = cards.Skip( 6 ).ToList();
+
+        foreach ( var card in partThree )
+            AddCardToRow(card, _rows[1]);
+
+        foreach ( var card in partFour )
+            AddCardToRow(card, _rows[2]);
+
+        OnCardsAddedToRows(dicCardsToRows);
+
+
 
         void AddCardToRow(CardData card, RowData row)
         {

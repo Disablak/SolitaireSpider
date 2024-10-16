@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerMoveHandler
+public class CardView : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Image _cardImage;
     [SerializeField] private List<Sprite> _cardSprites;
@@ -33,6 +33,9 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
 
     public void Open()
     {
+        if (_sequence != null)
+            return;
+
         _sequence = DOTween.Sequence();
         _sequence.Append( transform.DOScaleX( 0.0f, 0.1f ) );
         _sequence.AppendCallback( () => SetCardImage( _card.type ) );
@@ -63,15 +66,5 @@ public class CardView : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     void IPointerDownHandler.OnPointerDown( PointerEventData eventData )
     {
         OnClickedCard(this);
-    }
-
-    void IPointerUpHandler.OnPointerUp( PointerEventData eventData )
-    {
-        //throw new System.NotImplementedException();
-    }
-
-    void IPointerMoveHandler.OnPointerMove( PointerEventData eventData )
-    {
-        //throw new System.NotImplementedException();
     }
 }

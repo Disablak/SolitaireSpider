@@ -22,7 +22,7 @@ public class CardViewTweens : MonoBehaviour
         => _sequence != null && _sequence.IsActive() && _sequence.IsPlaying();
 
 
-    class TweenCardData
+    private class TweenCardData
     {
         public CardView cardView;
         public RectTransform rtCard;
@@ -40,10 +40,12 @@ public class CardViewTweens : MonoBehaviour
 
         foreach ( CardView card in cards )
         {
-
             _sequence.AppendInterval( 0.02f )
-                     .AppendCallback( () => { card.ShowOrHide( true ); } )
-                     .AppendCallback( () => card.transform.DOMove( _winStacksView.transform.position, _cardTweenTime ).SetEase( Ease.InOutSine ) );
+                     .AppendCallback( () =>
+                     {
+                         card.ShowOrHide( true );
+                         card.transform.DOMove( _winStacksView.GetCurWinStackTransform().position, _cardTweenTime ).SetEase( Ease.InOutSine );
+                     } );
         }
 
         _sequence.AppendInterval( _cardTweenTime + 0.1f );
@@ -52,6 +54,7 @@ public class CardViewTweens : MonoBehaviour
 
         void OnFinish()
         {
+            _winStacksView.ShowNextWinStack();
             finishCallback?.Invoke();
             InvokeActions();
         }
