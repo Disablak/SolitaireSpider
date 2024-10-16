@@ -10,5 +10,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4f39c988658844d0981952e297f704a7, type: 3}
-  m_Name: SolitaireData
+  m_Name: GameData
   m_EditorClassIdentifier: 

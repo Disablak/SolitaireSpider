@@ -9,7 +9,7 @@ public class GameModel
 {
     private List<RowData> _rows = new List<RowData>();
     private List<CardData> _deckCards = new List<CardData>();
-    private SolitaireData _data;
+    private GameData _data;
 
     public event Action<Dictionary<CardData, RowData>> OnCardsAddedToRows = delegate {};
     public event Action<CardData, RowData>             OnCardOpened       = delegate {};
@@ -18,7 +18,7 @@ public class GameModel
     public event Action<StackOfCardsData, RowData>     OnWinStackRemoved  = delegate {};
     public event Action<bool>                          OnGameOver         = delegate {};
 
-    public GameModel(SolitaireData data)
+    public GameModel(GameData data)
     {
         _data = data;
 

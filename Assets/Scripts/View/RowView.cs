@@ -25,7 +25,6 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         _id = id;
     }
-
     public void AddCard(CardView card)
     {
         card.transform.SetParent(_cardContainer);
@@ -42,9 +41,7 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         List<CardView> cardsToRemove = GetCardsByStack(stack);
 
         foreach ( CardView cardView in cardsToRemove )
-        {
             cardView.gameObject.SetActive( false );
-        }
 
         _cards = _cards.Except( cardsToRemove ).ToList();
     }
@@ -54,6 +51,41 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         CardView cardView = _cards.FirstOrDefault(x => x.Id == cardData.id);
         if (cardView)
             cardView.Open();
+
+        TryToShowBlockedCards();
+    }
+
+    private void TryToShowBlockedCards()
+    {
+        if (_cards.Count <= 1)
+            return;
+
+        List<CardView> reverseCards = new List<CardView>(_cards);
+        reverseCards.Reverse();
+
+        CardType checkCardType = reverseCards[0].Type;
+        bool blockAll = false;
+
+        for ( int i = 0; i < reverseCards.Count; i++ )
+        {
+            CardView cardView = reverseCards[i];
+            if (cardView.Type == checkCardType)
+            {
+                cardView.BlockOrUnblock( false );
+
+                if (checkCardType < CardType.King)
+                    checkCardType++;
+            }
+            else
+            {
+                blockAll = true;
+            }
+
+            if (blockAll && cardView.IsOpen)
+            {
+                cardView.BlockOrUnblock( true );
+            }
+        }
     }
 
     public void ShowOrHideStack(StackOfCardsData stack, bool show)

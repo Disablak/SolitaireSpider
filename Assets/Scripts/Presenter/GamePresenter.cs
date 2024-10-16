@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class GamePresenter : MonoBehaviour
 {
-    [SerializeField] private SolitaireData _solitaireData;
+    [SerializeField] private GameData _gameData;
     [SerializeField] private GameView _gameView;
 
     private GameModel _gameModel;
@@ -13,7 +13,7 @@ public class GamePresenter : MonoBehaviour
 
     private IEnumerator Start()
     {
-        _gameModel = new GameModel(_solitaireData);
+        _gameModel = new GameModel(_gameData);
         _gameModel.OnCardOpened += OnCardOpened;
         _gameModel.OnCardsAddedToRows += OnCardsAddedToRows;
         _gameModel.OnStackAdded += OnStackAdded;

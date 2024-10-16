@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class CardView : MonoBehaviour, IPointerDownHandler
 {
     [SerializeField] private Image _cardImage;
+    [SerializeField] private Image _cardBlockedImage;
     [SerializeField] private List<Sprite> _cardSprites;
     [SerializeField] private Sprite _closedSprite;
 
@@ -16,6 +17,8 @@ public class CardView : MonoBehaviour, IPointerDownHandler
     private Sequence _sequence;
 
     public int Id => _card.id;
+    public CardType Type => _card.type;
+    public bool IsOpen => _card.isOpen;
 
     public event Action<CardView> OnClickedCard = delegate {};
 
@@ -41,6 +44,11 @@ public class CardView : MonoBehaviour, IPointerDownHandler
         _sequence.AppendCallback( () => SetCardImage( _card.type ) );
         _sequence.Append( transform.DOScaleX( 1.0f, 0.1f ) );
         _sequence.Play();
+    }
+
+    public void BlockOrUnblock(bool block)
+    {
+        _cardBlockedImage.gameObject.SetActive(block);
     }
 
     public void DisableRaycastTarget()

@@ -51,6 +51,9 @@ public class GameView : MonoBehaviour
 
     private void ReturnStackToPrev()
     {
+        if (_currentStackOfCardsData == null)
+            return;
+
         RowView rowView = _rows[_currentStackOfCardsData.OriginRowId];
         rowView.ShowOrHideStack(_currentStackOfCardsData, true);
     }
