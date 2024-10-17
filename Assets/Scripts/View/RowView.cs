@@ -34,6 +34,8 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         LayoutRebuilder.ForceRebuildLayoutImmediate( layoutGroup );
 
         _cards.Add( card );
+
+        TryToShowBlockedCards();
     }
 
     public void RemoveStack(StackOfCardsData stack)
@@ -57,7 +59,7 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private void TryToShowBlockedCards()
     {
-        if (_cards.Count <= 1)
+        if (_cards.Count == 0)
             return;
 
         List<CardView> reverseCards = new List<CardView>(_cards);

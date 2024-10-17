@@ -88,110 +88,10 @@ public class GameModel
     {
         //Test0();
         //Test1();
+        //Test2();
 
         AddCardsFromDeckToRows(_data.startCardsCount);
         OpenLastCardInRows();
-    }
-
-    private void Test0()
-    {
-        _deckCards.Clear();
-
-        var cards  = new List<CardData>();
-        int cardId = 0;
-        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
-        {
-            var card = new CardData( cardId++, cardType, CardColor.Black );
-            card.Open();
-            cards.Add( card );
-        }
-
-        cards.Reverse();
-
-        var partOne = cards.Take( 6 ).ToList();
-        var partTwo = cards.Skip( 6 ).ToList();
-
-        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
-
-        //AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
-
-        foreach ( var card in partOne )
-            AddCardToRow(card, _rows[5]);
-
-        foreach ( var card in partTwo )
-            AddCardToRow(card, _rows[6]);
-
-        OnCardsAddedToRows(dicCardsToRows);
-
-        void AddCardToRow(CardData card, RowData row)
-        {
-            row.AddCard( card );
-            dicCardsToRows.Add( card, row );
-        }
-    }
-
-    private void Test1()
-    {
-        _deckCards.Clear();
-
-        var cards  = new List<CardData>();
-        int cardId = 0;
-        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
-        {
-            var card = new CardData( cardId++, cardType, CardColor.Black );
-            card.Open();
-            cards.Add( card );
-        }
-
-        cards.Reverse();
-
-        var partOne = cards.Take( 6 ).ToList();
-        var partTwo = cards.Skip( 6 ).ToList();
-
-        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
-
-        //AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
-
-        foreach ( var card in partOne )
-            AddCardToRow(card, _rows[5]);
-
-        foreach ( var card in partTwo )
-            AddCardToRow(card, _rows[6]);
-
-
-
-
-
-
-        cards.Clear();
-
-        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
-        {
-            var card = new CardData( cardId++, cardType, CardColor.Black );
-            card.Open();
-            cards.Add( card );
-        }
-
-        cards.Reverse();
-
-        var partThree = cards.Take( 6 ).ToList();
-        var partFour = cards.Skip( 6 ).ToList();
-
-        foreach ( var card in partThree )
-            AddCardToRow(card, _rows[1]);
-
-        foreach ( var card in partFour )
-            AddCardToRow(card, _rows[2]);
-
-        OnCardsAddedToRows(dicCardsToRows);
-
-
-
-        void AddCardToRow(CardData card, RowData row)
-        {
-            row.AddCard( card );
-            dicCardsToRows.Add( card, row );
-        }
     }
 
     public bool CanAddCards()
@@ -272,4 +172,140 @@ public class GameModel
         if (_rows.All( x => x.cards.Count == 0 ))
             OnGameOver?.Invoke( true );
     }
+
+    #region Tests
+    private void Test0()
+    {
+        _deckCards.Clear();
+
+        var cards  = new List<CardData>();
+        int cardId = 0;
+        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
+        {
+            var card = new CardData( cardId++, cardType, CardColor.Black );
+            card.Open();
+            cards.Add( card );
+        }
+
+        cards.Reverse();
+
+        var partOne = cards.Take( 6 ).ToList();
+        var partTwo = cards.Skip( 6 ).ToList();
+
+        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
+
+        AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
+
+        foreach ( var card in partOne )
+            AddCardToRow(card, _rows[5]);
+
+        foreach ( var card in partTwo )
+            AddCardToRow(card, _rows[6]);
+
+        OnCardsAddedToRows(dicCardsToRows);
+
+        void AddCardToRow(CardData card, RowData row)
+        {
+            row.AddCard( card );
+            dicCardsToRows.Add( card, row );
+        }
+    }
+
+    private void Test1()
+    {
+        _deckCards.Clear();
+
+        var cards  = new List<CardData>();
+        int cardId = 0;
+        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
+        {
+            var card = new CardData( cardId++, cardType, CardColor.Black );
+            card.Open();
+            cards.Add( card );
+        }
+
+        cards.Reverse();
+
+        var partOne = cards.Take( 6 ).ToList();
+        var partTwo = cards.Skip( 6 ).ToList();
+
+        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
+
+        //AddCardToRow( new CardData( cardId++, CardType.Five, CardColor.Black ), _rows[5] );
+
+        foreach ( var card in partOne )
+            AddCardToRow(card, _rows[5]);
+
+        foreach ( var card in partTwo )
+            AddCardToRow(card, _rows[6]);
+
+
+
+
+
+
+        cards.Clear();
+
+        for ( CardType cardType = CardType.Ace; cardType <= CardType.King; cardType++ )
+        {
+            var card = new CardData( cardId++, cardType, CardColor.Black );
+            card.Open();
+            cards.Add( card );
+        }
+
+        cards.Reverse();
+
+        var partThree = cards.Take( 6 ).ToList();
+        var partFour = cards.Skip( 6 ).ToList();
+
+        foreach ( var card in partThree )
+            AddCardToRow(card, _rows[1]);
+
+        foreach ( var card in partFour )
+            AddCardToRow(card, _rows[2]);
+
+        OnCardsAddedToRows(dicCardsToRows);
+
+
+
+        void AddCardToRow(CardData card, RowData row)
+        {
+            row.AddCard( card );
+            dicCardsToRows.Add( card, row );
+        }
+    }
+
+    private void Test2()
+    {
+        _deckCards.Clear();
+
+        var cards  = new List<CardData>();
+        int cardId = 0;
+
+        var card = new CardData( cardId++, CardType.Ace, CardColor.Black );
+        card.Open();
+        cards.Add( card );
+
+        var card1 = new CardData( cardId++, CardType.Three, CardColor.Black );
+        card1.Open();
+        cards.Add( card1 );
+
+        var card2 = new CardData( cardId++, CardType.Five, CardColor.Black );
+        card2.Open();
+        cards.Add( card2 );
+
+        Dictionary<CardData, RowData> dicCardsToRows = new Dictionary<CardData, RowData>();
+
+        foreach ( var cardData in cards )
+            AddCardToRow(cardData, _rows[3]);
+
+        OnCardsAddedToRows(dicCardsToRows);
+
+        void AddCardToRow(CardData thiscard, RowData row)
+        {
+            row.AddCard( thiscard );
+            dicCardsToRows.Add( thiscard, row );
+        }
+    }
+    #endregion
 }

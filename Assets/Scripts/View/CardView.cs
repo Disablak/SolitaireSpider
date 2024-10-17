@@ -8,6 +8,7 @@ using UnityEngine.UI;
 
 public class CardView : MonoBehaviour, IPointerDownHandler
 {
+    [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private Image _cardImage;
     [SerializeField] private Image _cardBlockedImage;
     [SerializeField] private List<Sprite> _cardSprites;
@@ -15,6 +16,7 @@ public class CardView : MonoBehaviour, IPointerDownHandler
 
     private CardData _card;
     private Sequence _sequence;
+    private bool _isOpen = false;
 
     public int Id => _card.id;
     public CardType Type => _card.type;
@@ -27,22 +29,27 @@ public class CardView : MonoBehaviour, IPointerDownHandler
     {
         _card             = cardData;
         _cardImage.sprite = _closedSprite;
+        _isOpen = cardData.isOpen;
 
-        if (_card.isOpen)
-        {
-            SetCardImage( _card.type );
-        }
+        if (_isOpen)
+            SetCardImage(_card.type);
     }
 
     public void Open()
     {
-        if (_sequence != null)
+        if (_isOpen)
             return;
 
+        PlayAnimationOpen();
+    }
+
+    private void PlayAnimationOpen()
+    {
         _sequence = DOTween.Sequence();
         _sequence.Append( transform.DOScaleX( 0.0f, 0.1f ) );
         _sequence.AppendCallback( () => SetCardImage( _card.type ) );
         _sequence.Append( transform.DOScaleX( 1.0f, 0.1f ) );
+        _sequence.AppendCallback( () => _isOpen = true );
         _sequence.Play();
     }
 
@@ -63,7 +70,7 @@ public class CardView : MonoBehaviour, IPointerDownHandler
 
     public void ShowOrHideSprite(bool show)
     {
-        _cardImage.enabled = show;
+        _canvasGroup.alpha = show ? 1 : 0;
     }
 
     private void SetCardImage(CardType cardType)
