@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 8138075858691401319}
   - component: {fileID: 5179530925306435728}
   m_Layer: 5
-  m_Name: 'Row '
+  m_Name: RowView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

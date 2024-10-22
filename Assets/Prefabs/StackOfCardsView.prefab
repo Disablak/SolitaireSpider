@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8138075858691401319}
   - component: {fileID: 1667616821638230196}
   m_Layer: 5
-  m_Name: StackOfCards
+  m_Name: StackOfCardsView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

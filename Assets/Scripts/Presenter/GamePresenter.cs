@@ -7,6 +7,7 @@ public class GamePresenter : MonoBehaviour
 {
     [SerializeField] private GameData _gameData;
     [SerializeField] private GameView _gameView;
+    [SerializeField] private CardViewFactory _cardFactory;
 
     private GameModel _gameModel;
 
@@ -21,7 +22,10 @@ public class GamePresenter : MonoBehaviour
         _gameModel.OnStackRemoved += OnStackRemoved;
         _gameModel.OnGameOver += OnGameOver;
 
-        _gameView.AddRows( _gameModel.GetRowCount() );
+        _cardFactory.Init();
+
+        _gameView.Init(_cardFactory);
+        _gameView.AddRows(_gameModel.GetRowCount());
 
         yield return null;
 

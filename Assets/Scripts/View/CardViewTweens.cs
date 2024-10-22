@@ -9,12 +9,12 @@ public class CardViewTweens : MonoBehaviour
     [SerializeField] private Canvas _canvas;
     [SerializeField] private RectTransform _rtOtherCard;
     [SerializeField] private WinStacksView _winStacksView;
-    [SerializeField] private CardView _cardViewPrefab;
 
     [Space]
     [SerializeField] private float _cardTweenTime = 0.3f;
     [SerializeField] private float _cardTweenInterval = 0.01f;
 
+    private CardViewFactory _cardFactory;
     private Sequence _sequence;
     private List<Action> _onFinishCardsToRows = new List<Action>();
 
@@ -29,6 +29,11 @@ public class CardViewTweens : MonoBehaviour
         public Vector2 from;
         public Vector2 to;
         public Action finishCallback;
+    }
+
+    public void Init(CardViewFactory cardFactory)
+    {
+        _cardFactory = cardFactory;
     }
 
     public void TweenWinStack(List<CardView> cards, Action finishCallback)
@@ -65,7 +70,8 @@ public class CardViewTweens : MonoBehaviour
         List<TweenCardData> tweenCardData = new List<TweenCardData>();
         foreach ( KeyValuePair<CardData,RowView> pair in dictionary )
         {
-            CardView tweenCard = Instantiate(_cardViewPrefab, transform);
+            CardView tweenCard = _cardFactory.GetCard();
+            tweenCard.transform.SetParent( transform );
             tweenCard.Init( pair.Key );
             tweenCard.ShowOrHide( false );
 
@@ -77,6 +83,7 @@ public class CardViewTweens : MonoBehaviour
 
             void OnFinish()
             {
+                _cardFactory.PoolCard( tweenCard );
                 tweenCard.ShowOrHide( false );
                 pair.Value.ShowOrHideCardSprite( pair.Key.id, true );
             }

@@ -6,13 +6,13 @@ public class GameView : MonoBehaviour
 {
     [SerializeField] private GamePresenter _presenter;
     [SerializeField] private RowView _rowPrefab;
-    [SerializeField] private CardView _cardPrefab;
     [SerializeField] private StackOfCardsView _stackOfCardsView;
     [SerializeField] private Transform _rowContainer;
     [SerializeField] private CardView _otherCard;
     [SerializeField] private PointerInput _pointerInput;
     [SerializeField] private CardViewTweens _cardViewTweens;
 
+    private CardViewFactory _cardFactory;
     private List<RowView> _rows;
     private StackOfCardsData _currentStackOfCardsData;
     public int _lastPointedRow = -1;
@@ -22,6 +22,12 @@ public class GameView : MonoBehaviour
     {
         _pointerInput.OnMouseReleased += OnPointerReleased;
         _otherCard.OnClickedCard += OnClickOtherCard;
+    }
+
+    public void Init(CardViewFactory cardFactory)
+    {
+        _cardFactory = cardFactory;
+        _cardViewTweens.Init(cardFactory);
     }
 
     private void OnClickOtherCard(CardView obj)
@@ -105,7 +111,7 @@ public class GameView : MonoBehaviour
     public void AddCardToRow(CardData card, RowData row)
     {
         var rowView = _rows[row.id];
-        var cardView = Instantiate( _cardPrefab, transform);
+        var cardView = _cardFactory.GetCard();
 
         cardView.Init(card);
         rowView.AddCard( cardView );
@@ -118,7 +124,7 @@ public class GameView : MonoBehaviour
         foreach ( KeyValuePair<CardData,RowData> value_pair in dictionary )
         {
             RowView rowView  = _rows[value_pair.Value.id];
-            CardView cardView = Instantiate(_cardPrefab, transform);
+            CardView cardView = _cardFactory.GetCard();
             cardView.Init(value_pair.Key);
             cardView.ShowOrHideSprite( false );
             rowView.AddCard( cardView );
