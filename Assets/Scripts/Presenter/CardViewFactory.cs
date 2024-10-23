@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CardViewFactory : MonoBehaviour
 {
-    [SerializeField] private CardView _cardViewPrefab;
+    [SerializeField] private CardView  _cardViewPrefab;
     [SerializeField] private Transform _cardsContainer;
 
     private ObjectPool<CardView> _cardViewPool;
@@ -14,10 +14,7 @@ public class CardViewFactory : MonoBehaviour
         _cardViewPool = new ObjectPool<CardView>(_cardViewPrefab.gameObject, _cardsContainer, 100);
     }
 
-    public CardView GetCard()
-    {
-        return _cardViewPool.Pull();
-    }
+    public CardView GetCard() => _cardViewPool.Pull();
 
     public void PoolCard(CardView cardView)
     {

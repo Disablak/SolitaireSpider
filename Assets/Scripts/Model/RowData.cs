@@ -5,23 +5,17 @@ using System.Linq;
 
 public class RowData
 {
-    public List<CardData> cards = new List<CardData>();
-    public int id;
+    public List<CardData> cards = new();
+    public int            id;
 
     public event Action<StackOfCardsData, RowData> OnWinStackRemoved = delegate {};
     public event Action<StackOfCardsData, RowData> OnStackAdded      = delegate {};
     public event Action<StackOfCardsData, RowData> OnStackRemoved    = delegate {};
     public event Action<CardData, RowData>         OnCardOpened      = delegate {};
 
-    public RowData(int id)
-    {
-        this.id = id;
-    }
+    public RowData(int id) => this.id = id;
 
-    public CardData GetLastCard()
-    {
-        return cards.LastOrDefault();
-    }
+    public CardData GetLastCard() => cards.LastOrDefault();
 
     public void AddCard(CardData card)
     {
@@ -42,15 +36,15 @@ public class RowData
     {
         CardData card = cards.First(x => x.id == cardId);
 
-        int indexOfCard = cards.IndexOf(card);
-        List<CardData> stackOfCards = cards.Where( ( t, i ) => i >= indexOfCard ).ToList();
+        int            indexOfCard  = cards.IndexOf(card);
+        List<CardData> stackOfCards = cards.Where((t, i) => i >= indexOfCard).ToList();
 
         return new StackOfCardsData(stackOfCards, id);
     }
 
     public void RemoveStack(StackOfCardsData stack)
     {
-        cards = cards.Except( stack.Cards ).ToList();
+        cards = cards.Except(stack.Cards).ToList();
 
         OnStackRemoved(stack, this);
     }
@@ -64,16 +58,13 @@ public class RowData
         if (!card.isOpen)
             return false;
 
-        int indexOfCard = cards.IndexOf(card);
+        int      indexOfCard   = cards.IndexOf(card);
         CardType checkCardType = card.type;
-        for ( int i = indexOfCard; i < cards.Count; i++ )
+        for (int i = indexOfCard; i < cards.Count; i++)
         {
             CardData cardData = cards[i];
 
-            if (cardData.type != checkCardType)
-            {
-                return false;
-            }
+            if (cardData.type != checkCardType) return false;
 
             checkCardType--;
         }
@@ -81,28 +72,16 @@ public class RowData
         return true;
     }
 
-    public bool CanAddStack(StackOfCardsData stack)
-    {
-        return CanAddCard( stack.FirstCard );
-    }
+    public bool CanAddStack(StackOfCardsData stack) => CanAddCard(stack.FirstCard);
 
     public bool CanAddCard(CardData card)
     {
-        if (!card.isOpen)
-        {
-            return true;
-        }
+        if (!card.isOpen) return true;
 
         CardData prevCard = GetLastCard();
-        if (prevCard == null)
-        {
-            return true;
-        }
+        if (prevCard == null) return true;
 
-        if (card.type == CardType.King)
-        {
-            return false;
-        }
+        if (card.type == CardType.King) return false;
 
         CardType cardTypeNeed = card.type + 1;
         return prevCard.type == cardTypeNeed;
@@ -124,7 +103,7 @@ public class RowData
             return false;
 
         CardType checkType = CardType.Ace;
-        for ( int i = cards.Count - 1; i >= 0; i-- )
+        for (int i = cards.Count - 1; i >= 0; i--)
         {
             CardData card = cards[i];
 
@@ -148,9 +127,9 @@ public class RowData
         if (!IsValidSet())
             return;
 
-        List<CardData> winSet = new List<CardData>();
+        List<CardData> winSet = new();
 
-        for ( int i = cards.Count - 1; i >= 0; i-- ) // TODO refa
+        for (int i = cards.Count - 1; i >= 0; i--) // TODO refa
         {
             CardData card = cards[i];
             winSet.Add(card);
@@ -159,8 +138,8 @@ public class RowData
                 break;
         }
 
-        cards = cards.Except( winSet ).ToList();
+        cards = cards.Except(winSet).ToList();
 
-        OnWinStackRemoved(new StackOfCardsData( winSet, id ), this);
+        OnWinStackRemoved(new StackOfCardsData(winSet, id), this);
     }
 }

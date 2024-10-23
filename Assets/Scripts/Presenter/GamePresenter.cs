@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class GamePresenter : MonoBehaviour
 {
-    [SerializeField] private GameData _gameData;
-    [SerializeField] private GameView _gameView;
+    [SerializeField] private GameData        _gameData;
+    [SerializeField] private GameView        _gameView;
     [SerializeField] private CardViewFactory _cardFactory;
 
     private GameModel _gameModel;
@@ -14,13 +14,13 @@ public class GamePresenter : MonoBehaviour
 
     private IEnumerator Start()
     {
-        _gameModel = new GameModel(_gameData);
-        _gameModel.OnCardOpened += OnCardOpened;
+        _gameModel                    =  new GameModel(_gameData);
+        _gameModel.OnCardOpened       += OnCardOpened;
         _gameModel.OnCardsAddedToRows += OnCardsAddedToRows;
-        _gameModel.OnStackAdded += OnStackAdded;
-        _gameModel.OnWinStackRemoved += OnWinStackRemoved;
-        _gameModel.OnStackRemoved += OnStackRemoved;
-        _gameModel.OnGameOver += OnGameOver;
+        _gameModel.OnStackAdded       += OnStackAdded;
+        _gameModel.OnWinStackRemoved  += OnWinStackRemoved;
+        _gameModel.OnStackRemoved     += OnStackRemoved;
+        _gameModel.OnGameOver         += OnGameOver;
 
         _cardFactory.Init();
 
@@ -32,55 +32,43 @@ public class GamePresenter : MonoBehaviour
         _gameModel.StartSetup();
     }
 
-    private void OnGameOver( bool win )
+    private void OnGameOver(bool win)
     {
-        Debug.Log( $"Game Over ({win})" );
+        Debug.Log($"Game Over ({win})");
     }
 
-    private void OnStackRemoved( StackOfCardsData arg1, RowData arg2 )
+    private void OnStackRemoved(StackOfCardsData arg1, RowData arg2)
     {
         _gameView.RemoveStackOfCards(arg1, arg2);
     }
 
-    private void OnWinStackRemoved( StackOfCardsData arg1, RowData arg2 )
+    private void OnWinStackRemoved(StackOfCardsData arg1, RowData arg2)
     {
         _gameView.RemoveWinStack(arg1, arg2);
     }
 
-    private void OnStackAdded( StackOfCardsData arg1, RowData arg2 )
+    private void OnStackAdded(StackOfCardsData arg1, RowData arg2)
     {
         _gameView.AddStackOfCards(arg1, arg2);
     }
 
-    private void OnCardsAddedToRows( Dictionary<CardData, RowData> dictionary )
+    private void OnCardsAddedToRows(Dictionary<CardData, RowData> dictionary)
     {
-        _gameView.AddCardsToRows( dictionary );
+        _gameView.AddCardsToRows(dictionary);
     }
 
-    private void OnCardOpened( CardData card, RowData rowData )
+    private void OnCardOpened(CardData card, RowData rowData)
     {
-        _gameView.OpenCard( card, rowData );
+        _gameView.OpenCard(card, rowData);
     }
 
-    public bool CanAddNewCards()
-    {
-        return _gameModel.CanAddCards();
-    }
+    public bool CanAddNewCards() => _gameModel.CanAddCards();
 
-    public bool CanAddStackOfCards(StackOfCardsData stack, int rowId)
-    {
-        return _gameModel.CanAddStackOfCards(stack, rowId);
-    }
+    public bool CanAddStackOfCards(StackOfCardsData stack, int rowId) => _gameModel.CanAddStackOfCards(stack, rowId);
 
-    public bool CanTakeStackOfCards(int cardId, int rowId)
-    {
-        return _gameModel.CanTakeStackOfCards(cardId, rowId);
-    }
+    public bool CanTakeStackOfCards(int cardId, int rowId) => _gameModel.CanTakeStackOfCards(cardId, rowId);
 
-    public StackOfCardsData GetStackOfCards(int cardId, int rowId)
-    {
-        return _gameModel.GetStackOfCards(cardId, rowId);
-    }
+    public StackOfCardsData GetStackOfCards(int cardId, int rowId) => _gameModel.GetStackOfCards(cardId, rowId);
 
     public void RemoveStackOfCards(StackOfCardsData stack, int rowId)
     {

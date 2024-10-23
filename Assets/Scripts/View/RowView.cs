@@ -7,24 +7,24 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 
-public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class RowView : MonoBehaviour, IPointerEnterHandler
 {
     [SerializeField] public Transform _cardContainer;
 
-    private int _id = -1;
-    private List<CardView> _cards = new List<CardView>();
+    private int             _id    = -1;
+    private List<CardView>  _cards = new();
     private CardViewFactory _cardFactory;
 
     public List<CardView> Cards => _cards;
-    public int Id => _id;
+    public int            Id    => _id;
 
-    public event Action<CardView, RowView> OnClickedCardInRow = delegate{};
-    public event Action<int> OnPointerEnterInRow = delegate{};
+    public event Action<CardView, RowView> OnClickedCardInRow  = delegate {};
+    public event Action<int>               OnPointerEnterInRow = delegate {};
 
 
     public void Init(int id, CardViewFactory cardFactory)
     {
-        _id = id;
+        _id          = id;
         _cardFactory = cardFactory;
     }
 
@@ -33,10 +33,10 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         card.transform.SetParent(_cardContainer);
         card.OnClickedCard += OnClickedCard;
 
-        var layoutGroup = _cardContainer.GetComponent<RectTransform>();
-        LayoutRebuilder.ForceRebuildLayoutImmediate( layoutGroup );
+        RectTransform layoutGroup = _cardContainer.GetComponent<RectTransform>();
+        LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup);
 
-        _cards.Add( card );
+        _cards.Add(card);
 
         TryToShowBlockedCards();
     }
@@ -45,10 +45,10 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         List<CardView> cardsToRemove = GetCardsByStack(stack);
 
-        foreach ( CardView cardView in cardsToRemove )
+        foreach (CardView cardView in cardsToRemove)
             _cardFactory.PoolCard(cardView);
 
-        _cards = _cards.Except( cardsToRemove ).ToList();
+        _cards = _cards.Except(cardsToRemove).ToList();
     }
 
     public void OpenCard(CardData cardData)
@@ -65,31 +65,26 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         if (_cards.Count == 0)
             return;
 
-        List<CardView> reverseCards = new List<CardView>(_cards);
+        List<CardView> reverseCards = new(_cards);
         reverseCards.Reverse();
 
         CardType checkCardType = reverseCards[0].Type;
-        bool blockAll = false;
+        bool     blockAll      = false;
 
-        for ( int i = 0; i < reverseCards.Count; i++ )
+        for (int i = 0; i < reverseCards.Count; i++)
         {
             CardView cardView = reverseCards[i];
             if (cardView.Type == checkCardType)
             {
-                cardView.BlockOrUnblock( false );
+                cardView.BlockOrUnblock(false);
 
                 if (checkCardType < CardType.King)
                     checkCardType++;
             }
             else
-            {
                 blockAll = true;
-            }
 
-            if (blockAll && cardView.IsOpen)
-            {
-                cardView.BlockOrUnblock( true );
-            }
+            if (blockAll && cardView.IsOpen) cardView.BlockOrUnblock(true);
         }
     }
 
@@ -97,17 +92,14 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         List<CardView> cardsToRemove = GetCardsByStack(stack);
 
-        foreach (CardView cardView in cardsToRemove)
-        {
-            cardView.gameObject.SetActive(show);
-        }
+        foreach (CardView cardView in cardsToRemove) cardView.gameObject.SetActive(show);
     }
 
     public void ShowOrHideCardSprite(int id, bool show)
     {
         CardView cardView = _cards.FirstOrDefault(x => x.Id == id);
         if (cardView)
-            cardView.ShowOrHideSprite( show );
+            cardView.ShowOrHideSprite(show);
     }
 
     public CardView GetCardView(int id)
@@ -117,14 +109,11 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public List<CardView> GetCardsByStack(StackOfCardsData stack)
     {
-        List<CardView> cards = new List<CardView>();
-        for ( int i = 0; i < Cards.Count; i++ )
+        List<CardView> cards = new();
+        for (int i = 0; i < Cards.Count; i++)
         {
-            var cardView = Cards[i];
-            if (stack.Cards.Select( x => x.id ).Contains( cardView.Id ))
-            {
-                cards.Add( cardView );
-            }
+            CardView cardView = Cards[i];
+            if (stack.Cards.Select(x => x.id).Contains(cardView.Id)) cards.Add(cardView);
         }
 
         return cards;
@@ -135,13 +124,8 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         OnClickedCardInRow(cardView, this);
     }
 
-    public void OnPointerEnter( PointerEventData eventData )
+    public void OnPointerEnter(PointerEventData eventData)
     {
         OnPointerEnterInRow(_id);
-    }
-
-    public void OnPointerExit( PointerEventData eventData )
-    {
-        //Debug.Log( $"exit {_id}" );
     }
 }

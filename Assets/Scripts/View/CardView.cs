@@ -8,19 +8,19 @@ using UnityEngine.UI;
 
 public class CardView : MonoBehaviour, IPointerDownHandler
 {
-    [SerializeField] private CanvasGroup _canvasGroup;
-    [SerializeField] private Image _cardImage;
-    [SerializeField] private Image _cardBlockedImage;
+    [SerializeField] private CanvasGroup  _canvasGroup;
+    [SerializeField] private Image        _cardImage;
+    [SerializeField] private Image        _cardBlockedImage;
     [SerializeField] private List<Sprite> _cardSprites;
-    [SerializeField] private Sprite _closedSprite;
+    [SerializeField] private Sprite       _closedSprite;
 
     private CardData _card;
     private Sequence _sequence;
-    private bool _isOpen = false;
+    private bool     _isOpen = false;
 
-    public int Id => _card.id;
-    public CardType Type => _card.type;
-    public bool IsOpen => _card.isOpen;
+    public int      Id     => _card.id;
+    public CardType Type   => _card.type;
+    public bool     IsOpen => _card.isOpen;
 
     public event Action<CardView> OnClickedCard = delegate {};
 
@@ -29,7 +29,7 @@ public class CardView : MonoBehaviour, IPointerDownHandler
     {
         _card             = cardData;
         _cardImage.sprite = _closedSprite;
-        _isOpen = cardData.isOpen;
+        _isOpen           = cardData.isOpen;
 
         if (_isOpen)
             SetCardImage(_card.type);
@@ -46,10 +46,10 @@ public class CardView : MonoBehaviour, IPointerDownHandler
     private void PlayAnimationOpen()
     {
         _sequence = DOTween.Sequence();
-        _sequence.Append( transform.DOScaleX( 0.0f, 0.1f ) );
-        _sequence.AppendCallback( () => SetCardImage( _card.type ) );
-        _sequence.Append( transform.DOScaleX( 1.0f, 0.1f ) );
-        _sequence.AppendCallback( () => _isOpen = true );
+        _sequence.Append(transform.DOScaleX(0.0f, 0.1f));
+        _sequence.AppendCallback(() => SetCardImage(_card.type));
+        _sequence.Append(transform.DOScaleX(1.0f, 0.1f));
+        _sequence.AppendCallback(() => _isOpen = true);
         _sequence.Play();
     }
 
@@ -65,7 +65,7 @@ public class CardView : MonoBehaviour, IPointerDownHandler
 
     public void ShowOrHide(bool show)
     {
-        gameObject.SetActive( show );
+        gameObject.SetActive(show);
     }
 
     public void ShowOrHideSprite(bool show)
@@ -78,7 +78,7 @@ public class CardView : MonoBehaviour, IPointerDownHandler
         _cardImage.sprite = _cardSprites[(int)cardType - 1];
     }
 
-    void IPointerDownHandler.OnPointerDown( PointerEventData eventData )
+    void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
         OnClickedCard(this);
     }

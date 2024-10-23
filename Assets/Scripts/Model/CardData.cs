@@ -1,16 +1,16 @@
 
 public class CardData
 {
-    public int id = -1;
-    public CardColor color = CardColor.None;
-    public CardType type = CardType.None;
-    public bool isOpen = false;
+    public int       id     = -1;
+    public CardColor color  = CardColor.None;
+    public CardType  type   = CardType.None;
+    public bool      isOpen = false;
 
 
     public CardData(int id, CardType type, CardColor color)
     {
-        this.id = id;
-        this.type = type;
+        this.id    = id;
+        this.type  = type;
         this.color = color;
     }
 

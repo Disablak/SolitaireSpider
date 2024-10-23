@@ -4,24 +4,24 @@ using UnityEngine;
 
 public class GameView : MonoBehaviour
 {
-    [SerializeField] private GamePresenter _presenter;
-    [SerializeField] private RowView _rowPrefab;
+    [SerializeField] private GamePresenter    _presenter;
+    [SerializeField] private RowView          _rowPrefab;
     [SerializeField] private StackOfCardsView _stackOfCardsView;
-    [SerializeField] private Transform _rowContainer;
-    [SerializeField] private CardView _otherCard;
-    [SerializeField] private PointerInput _pointerInput;
-    [SerializeField] private CardViewTweens _cardViewTweens;
+    [SerializeField] private Transform        _rowContainer;
+    [SerializeField] private CardView         _otherCard;
+    [SerializeField] private PointerInput     _pointerInput;
+    [SerializeField] private CardViewTweens   _cardViewTweens;
 
-    private CardViewFactory _cardFactory;
-    private List<RowView> _rows;
+    private CardViewFactory  _cardFactory;
+    private List<RowView>    _rows;
     private StackOfCardsData _currentStackOfCardsData;
-    public int _lastPointedRow = -1;
+    public  int              _lastPointedRow = -1;
 
 
     private void Awake()
     {
         _pointerInput.OnMouseReleased += OnPointerReleased;
-        _otherCard.OnClickedCard += OnClickOtherCard;
+        _otherCard.OnClickedCard      += OnClickOtherCard;
     }
 
     public void Init(CardViewFactory cardFactory)
@@ -74,18 +74,18 @@ public class GameView : MonoBehaviour
     {
         _rows = new List<RowView>(count);
 
-        for ( int i = 0; i < count; i++ )
+        for (int i = 0; i < count; i++)
         {
             RowView row = Instantiate(_rowPrefab, _rowContainer);
             row.Init(i, _cardFactory);
-            row.OnClickedCardInRow += OnClickedCardInRow;
+            row.OnClickedCardInRow  += OnClickedCardInRow;
             row.OnPointerEnterInRow += OnPointerEnterInRow;
 
-            _rows.Add( row );
+            _rows.Add(row);
         }
     }
 
-    private void OnPointerEnterInRow( int rowId )
+    private void OnPointerEnterInRow(int rowId)
     {
         _lastPointedRow = rowId;
     }
@@ -95,12 +95,12 @@ public class GameView : MonoBehaviour
         if (_cardViewTweens.IsCardsTweening)
             return;
 
-        if (!_presenter.CanTakeStackOfCards( cardView.Id, rowView.Id ))
+        if (!_presenter.CanTakeStackOfCards(cardView.Id, rowView.Id))
             return;
 
         StackOfCardsData stackOfCardsData = _presenter.GetStackOfCards(cardView.Id, rowView.Id);
 
-        _stackOfCardsView.Init( stackOfCardsData );
+        _stackOfCardsView.Init(stackOfCardsData);
 
         rowView.ShowOrHideStack(stackOfCardsData, false);
 
@@ -110,24 +110,24 @@ public class GameView : MonoBehaviour
 
     public void AddCardToRow(CardData card, RowData row)
     {
-        var rowView = _rows[row.id];
-        var cardView = _cardFactory.GetCard();
+        RowView  rowView  = _rows[row.id];
+        CardView cardView = _cardFactory.GetCard();
 
         cardView.Init(card);
-        rowView.AddCard( cardView );
+        rowView.AddCard(cardView);
     }
 
     public void AddCardsToRows(Dictionary<CardData, RowData> dictionary)
     {
-        Dictionary<CardData, RowView> dictionaryView = new Dictionary<CardData, RowView>();
+        Dictionary<CardData, RowView> dictionaryView = new();
 
-        foreach ( KeyValuePair<CardData,RowData> value_pair in dictionary )
+        foreach (KeyValuePair<CardData, RowData> value_pair in dictionary)
         {
-            RowView rowView  = _rows[value_pair.Value.id];
+            RowView  rowView  = _rows[value_pair.Value.id];
             CardView cardView = _cardFactory.GetCard();
             cardView.Init(value_pair.Key);
-            cardView.ShowOrHideSprite( false );
-            rowView.AddCard( cardView );
+            cardView.ShowOrHideSprite(false);
+            rowView.AddCard(cardView);
 
             dictionaryView.Add(value_pair.Key, rowView);
         }
@@ -137,13 +137,13 @@ public class GameView : MonoBehaviour
 
     public void OpenCard(CardData cardData, RowData rowData)
     {
-        _cardViewTweens.AddActionInQueueOrInvokeImediatly( () => _rows[rowData.id].OpenCard( cardData ) );
+        _cardViewTweens.AddActionInQueueOrInvokeImediatly(() => _rows[rowData.id].OpenCard(cardData));
     }
 
     public void AddStackOfCards(StackOfCardsData stackOfCardsData, RowData rowData)
     {
-        foreach ( CardData card in stackOfCardsData.Cards )
-            AddCardToRow( card, rowData );
+        foreach (CardData card in stackOfCardsData.Cards)
+            AddCardToRow(card, rowData);
     }
 
     public void RemoveStackOfCards(StackOfCardsData stackOfCardsData, RowData rowData)
@@ -153,8 +153,8 @@ public class GameView : MonoBehaviour
 
     public void RemoveWinStack(StackOfCardsData stackOfCardsData, RowData rowData)
     {
-        var cards = _rows[rowData.id].GetCardsByStack( stackOfCardsData );
+        List<CardView> cards = _rows[rowData.id].GetCardsByStack(stackOfCardsData);
 
-        _cardViewTweens.TweenWinStack(cards, () => _rows[rowData.id].RemoveStack(stackOfCardsData) );
+        _cardViewTweens.TweenWinStack(cards, () => _rows[rowData.id].RemoveStack(stackOfCardsData));
     }
 }
