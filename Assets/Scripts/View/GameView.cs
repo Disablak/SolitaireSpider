@@ -77,7 +77,7 @@ public class GameView : MonoBehaviour
         for ( int i = 0; i < count; i++ )
         {
             RowView row = Instantiate(_rowPrefab, _rowContainer);
-            row.SetId(i);
+            row.Init(i, _cardFactory);
             row.OnClickedCardInRow += OnClickedCardInRow;
             row.OnPointerEnterInRow += OnPointerEnterInRow;
 

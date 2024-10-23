@@ -13,6 +13,7 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     private int _id = -1;
     private List<CardView> _cards = new List<CardView>();
+    private CardViewFactory _cardFactory;
 
     public List<CardView> Cards => _cards;
     public int Id => _id;
@@ -21,10 +22,12 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     public event Action<int> OnPointerEnterInRow = delegate{};
 
 
-    public void SetId(int id)
+    public void Init(int id, CardViewFactory cardFactory)
     {
         _id = id;
+        _cardFactory = cardFactory;
     }
+
     public void AddCard(CardView card)
     {
         card.transform.SetParent(_cardContainer);
@@ -43,7 +46,7 @@ public class RowView : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
         List<CardView> cardsToRemove = GetCardsByStack(stack);
 
         foreach ( CardView cardView in cardsToRemove )
-            cardView.gameObject.SetActive( false );
+            _cardFactory.PoolCard(cardView);
 
         _cards = _cards.Except( cardsToRemove ).ToList();
     }
